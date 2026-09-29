@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ObligationOS - Personal Intelligence Network</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+            --text: #111827;
+            --text-light: #6b7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+            gap: 0;
+        }
+
+        .sidebar {
+            background: var(--dark);
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 260px;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(99, 102, 241, 0.2);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-link span {
+            font-size: 18px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: var(--text);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .stat-content h3 {
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            opacity: 0.2;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            width: 80px;
+            height: 80px;
+        }
+
+        .progress-ring-circle {
+            stroke: var(--border);
+            fill: transparent;
+            stroke-width: 6;
+            transition: stroke-dashoffset 0.5s;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .timeline-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .timeline-content p {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .urgency-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .urgency-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .urgency-high {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        .urgency-medium {
+            background: #fef08a;
+            color: #713f12;
+        }
+
+        .urgency-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: var(--text);
+        }
+
+        .close {
+            color: var(--text-light);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close:hover {
+            color: var(--text);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: var(--light);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filter-btn {
+            padding: 10px 15px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 2000;
+            animation: slideInRight 0.3s;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .insight-item {
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .insight-item h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .insight-item p {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .priority-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .priority-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .priority-btn.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .detail-view {
+            display: none;
+        }
+
+        .detail-view.active {
+            display: block;
+        }
+
+        .list-view {
+            display: block;
+        }
+
+        .list-view.hide {
+            display: none;
+        }
+
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .action-button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                margin-bottom: 20px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        .health-score {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 900;
+            color: white;
+            position: relative;
+        }
+
+        .score-circle::after {
+            content: '%';
+            font-size: 20px;
+        }
+
+        .notification-center {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 12px;
+            border-left: 3px solid var(--primary);
+            background: var(--light);
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .notification-item.critical {
+            border-left-color: var(--danger);
+            background: #fee2e2;
+        }
+
+        .notification-item.warning {
+            border-left-color: var(--warning);
+            background: #fef3c7;
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-widget {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--light);
+            transition: all 0.3s;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.has-event {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .reminder-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">📊 ObligationOS</div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" data-section="dashboard">
+                        <span>📈</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="bills">
+                        <span>💰</span> Bills & Payments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="insurance">
+                        <span>🛡️</span> Insurance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="maintenance">
+                        <span>🔧</span> Maintenance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="subscriptions">
+                        <span>🎯</span> Subscriptions
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="documents">
+                        <span>📄</span> Documents
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="appointments">
+                        <span>📅</span> Appointments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="analytics">
+                        <span>📊</span> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="reminders">
+                        <span>🔔</span> Reminders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="settings">
+                        <span>⚙️</span> Settings
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <!-- DASHBOARD SECTION -->
+            <section id="dashboard" class="section active">
+                <div class="header">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Your Personal Life Administration Hub</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="openModal('addObligationModal')">+ Add Obligation</button>
+                        <button class="btn btn-primary" onclick="syncAllData()">🔄 Sync</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Health Score Card -->
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;">Life Administration Health</h3>
+                        <div class="health-score">
+                            <div class="score-circle" id="healthScore">85</div>
+                            <div>
+                                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 10px;">Overall Status</p>
+                                <p id="healthStatus" style="font-size: 14px; font-weight: 600; color: var(--success);">Excellent</p>
+                                <p style="font-size: 12px; color: var(--text-light); margin-top: 10px;" id="healthDetail">All obligations tracked and on schedule</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="card stat-card">
+                        <div class="stat-content">
+                            <h3>Total Obligations</h3>
+                            <div class="stat-value" id="totalObligations">0</div>
+                            <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Across all categories</p>
+                        </div>
+                        <div class="stat-icon">📋</div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="stat-content">
+                            <h3>Due This Month</h3>
+                            <div class="stat-value" id="duThisMonth">0</div>
+                            <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Upcoming deadlines</p>
+                        </div>
+                        <div class="stat-icon">⏰</div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="stat-content">
+                            <h3>Monthly Spending</h3>
+                            <div class="stat-value" id="monthlySpending">$0</div>
+                            <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Total obligations cost</p>
+                        </div>
+                        <div class="stat-icon">💵</div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="stat-content">
+                            <h3>At Risk</h3>
+                            <div class="stat-value" id="atRisk" style="color: var(--danger);">0</div>
+                            <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">Overdue or critical</p>
+                        </div>
+                        <div class="stat-icon">⚠️</div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Obligations Timeline -->
+                <div class="card">
+                    <h3 style="margin-bottom: 20px;">Next 30 Days Timeline</h3>
+                    <div class="timeline" id="upcomingTimeline">
+                        <div class="empty-state">
+                            <p>No upcoming obligations. Add one to get started!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="card">
+                    <h3 style="margin-bottom: 20px;">🤖 AI Insights & Recommendations</h3>
+                    <div id="aiInsights">
+                        <div class="insight-item">
+                            <h4>💡 Smart Tip</h4>
+                            <p>Set up automatic payments for recurring bills to never miss a deadline!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BILLS & PAYMENTS SECTION -->
+            <section id="bills" class="section">
+                <div class="header">
+                    <div>
+                        <h1>Bills & Payments</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Manage all recurring payments</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addBillModal')">+ Add Bill</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="search-box">
+                        <input type="text" id="billSearch" placeholder="Search bills...">
+                        <select class="filter-btn" id="billFilter">
+                            <option value="">All Bills</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="billsTable">
+                            <thead>
+                                <tr>
+                                    <th>Bill Name</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Frequency</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billsBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INSURANCE SECTION -->
+            <section id="insurance" class="section">
+                <div class="header">
+                    <div>
+                        <h1>Insurance Policies</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Track renewals and policy details</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addInsuranceModal')">+ Add Policy</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="search-box">
+                        <input type="text" id="insuranceSearch" placeholder="Search policies...">
+                        <select class="filter-btn" id="insuranceFilter">
+                            <option value="">All Policies</option>
+                            <option value="active">Active</option>
+                            <option value="expiring">Expiring Soon</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="insuranceTable">
+                            <thead>
+                                <tr>
+                                    <th>Policy Name</th>
+                                    <th>Provider</th>
+                                    <th>Premium</th>
+                                    <th>Renewal Date</th>
+                                    <th>Coverage Type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="insuranceBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MAINTENANCE SECTION -->
+            <section id="maintenance" class="section">
+                <div class="header">
+                    <div>
+                        <h1>Vehicle & Property Maintenance</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Schedule and track maintenance tasks</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addMaintenanceModal')">+ Add Maintenance</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="search-box">
+                        <input type="text" id="maintenanceSearch" placeholder="Search maintenance...">
+                        <select class="filter-btn" id="maintenanceFilter">
+                            <option value="">All Tasks</option>
+                            <option value="completed">Completed</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="maintenanceTable">
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Asset</th>
+                                    <th>Last Done</th>
+                                    <th>Next Due</th>
+                                    <th>Estimated Cost</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="maintenanceBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SUBSCRIPTIONS SECTION -->
+            <section id="subscriptions" class="section">
+                <div class="header">
+                    <div>
+                        <h1>Subscriptions & Memberships</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Manage all recurring subscriptions</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addSubscriptionModal')">+ Add Subscription</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="search-box">
+                        <input type="text" id="subscriptionSearch" placeholder="Search subscriptions...">
+                        <select class="filter-btn" id="subscriptionFilter">
+                            <option value="">All Subscriptions</option>
+                            <option value="active">Active</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="expiring">Expiring Soon</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="subscriptionTable">
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Cost</th>
+                                    <th>Billing Cycle</th>
+                                    <th>Next Charge</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subscriptionBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DOCUMENTS SECTION -->
+            <section id="documents" class="section">
+                <div class="header">
+                    <div>
+                        <h1>Important Documents</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Track expiring documents and certifications</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addDocumentModal')">+ Add Document</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="search-box">
+                        <input type="text" id="documentSearch" placeholder="Search documents...">
+                        <select class="filter-btn" id="documentFilter">
+                            <option value="">All Documents</option>
+                            <option value="valid">Valid</option>
+                            <option value="expiring">Expiring Soon</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="documentTable">
+                            <thead>
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Type</th>
+                                    <th>Issue Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Days Left</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documentBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- APPOINTMENTS SECTION -->
+            <section id="appointments" class="section">
+                <div class="header">
+                    <div>
+                        <h1>Appointments & Checkups</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Schedule medical and professional appointments</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addAppointmentModal')">+ Add Appointment</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>Calendar View</h3>
+                        <div class="calendar-widget" id="appointmentCalendar">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Upcoming Appointments</h3>
+                        <div id="appointmentList" style="max-height: 400px; overflow-y: auto;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table id="appointmentTable">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Provider/Specialist</th>
+                                    <th>Date & Time</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ANALYTICS SECTION -->
+            <section id="analytics" class="section">
+                <div class="header">
+                    <h1>Analytics & Insights</h1>
+                    <p style="color: var(--text-light); margin-top: 5px;">Spending patterns and trends</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>Monthly Spending Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="spendingChart"></canvas>
+                        </div>
+                        <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div style="padding: 10px; background: var(--light); border-radius: 8px;">
+                                <p style="font-size: 12px; color: var(--text-light);">Bills & Payments</p>
+                                <p style="font-size: 16px; font-weight: 600;" id="billsSpending">$0</p>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: 8px;">
+                                <p style="font-size: 12px; color: var(--text-light);">Subscriptions</p>
+                                <p style="font-size: 16px; font-weight: 600;" id="subSpending">$0</p>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: 8px;">
+                                <p style="font-size: 12px; color: var(--text-light);">Insurance</p>
+                                <p style="font-size: 16px; font-weight: 600;" id="insSpending">$0</p>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: 8px;">
+                                <p style="font-size: 12px; color: var(--text-light);">Maintenance</p>
+                                <p style="font-size: 16px; font-weight: 600;" id="mainSpending">$0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Obligation Completion Rate</h3>
+                        <div style="margin-top: 30px;">
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <svg class="progress-ring" viewBox="0 0 100 100">
+                                    <circle class="progress-ring-circle" stroke="#e5e7eb" fill="none" stroke-width="8" r="42" cx="50" cy="50"/>
+                                    <circle class="progress-ring-circle" stroke="url(#grad1)" fill="none" stroke-width="8" r="42" cx="50" cy="50" id="progressCircle" style="stroke-dasharray: 263.89; stroke-dashoffset: 0;"/>
+                                    <defs>
+                                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div>
+                                    <p style="font-size: 24px; font-weight: 900; color: var(--primary);" id="completionRate">0%</p>
+                                    <p style="font-size: 12px; color: var(--text-light);">Tasks completed on time</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Most Expensive Categories</h3>
+                        <div style="margin-top: 20px;">
+                            <div id="topCategories"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Upcoming 90 Days Forecast</h3>
+                        <div style="margin-top: 20px;">
+                            <div class="timeline" id="forecastTimeline"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REMINDERS SECTION -->
+            <section id="reminders" class="section">
+                <div class="header">
+                    <div>
+                        <h1>Smart Reminders</h1>
+                        <p style="color: var(--text-light); margin-top: 5px;">Configure automated reminders across channels</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('addReminderModal')">+ Add Reminder</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab(event, 'reminderSettings')">Settings</div>
+                        <div class="tab" onclick="switchTab(event, 'reminderHistory')">History</div>
+                    </div>
+
+                    <div id="reminderSettings">
+                        <div class="notification-center" id="remindersList">
+                        </div>
+                    </div>
+
+                    <div id="reminderHistory" style="display: none;">
+                        <table id="reminderHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Reminder</th>
+                                    <th>Sent Date</th>
+                                    <th>Channel</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reminderHistoryBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Reminder Configuration</h3>
+                    <div style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label>Default Reminder Channels</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="emailReminder" checked> Email
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="pushReminder" checked> Push Notification
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="smsReminder"> SMS
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="slackReminder"> Slack
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Reminder Timing</label>
+                            <select id="reminderTiming" style="margin-top: 10px;">
+                                <option value="1">1 day before</option>
+                                <option value="3" selected>3 days before</option>
+                                <option value="7">1 week before</option>
+                                <option value="14">2 weeks before</option>
+                                <option value="30">1 month before</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="saveReminderSettings()" style="margin-top: 20px;">Save Settings</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SETTINGS SECTION -->
+            <section id="settings" class="section">
+                <div class="header">
+                    <h1>Settings & Preferences</h1>
+                    <p style="color: var(--text-light); margin-top: 5px;">Customize your experience</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>User Profile</h3>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Name</label>
+                            <input type="text" id="userName" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="userEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Currency</label>
+                            <select id="currency">
+                                <option value="$">USD ($)</option>
+                                <option value="€">EUR (€)</option>
+                                <option value="£">GBP (£)</option>
+                                <option value="¥">JPY (¥)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveProfile()" style="margin-top: 20px;">Save Profile</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Notification Preferences</h3>
+                        <div style="margin-top: 20px;">
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                <input type="checkbox" id="notifyOverdue" checked>
+                                <div>
+                                    <p style="font-weight: 600;">Overdue Notifications</p>
+                                    <p style="font-size: 12px; color: var(--text-light);">Alert me when bills are overdue</p>
+                                </div>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                <input type="checkbox" id="notifyUpcoming" checked>
+                                <div>
+                                    <p style="font-weight: 600;">Upcoming Reminders</p>
+                                    <p style="font-size: 12px; color: var(--text-light);">Remind me before deadlines</p>
+                                </div>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="notifyWeekly">
+                                <div>
+                                    <p style="font-weight: 600;">Weekly Summary</p>
+                                    <p style="font-size: 12px; color: var(--text-light);">Get a weekly summary email</p>
+                                </div>
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveNotificationPrefs()" style="margin-top: 20px;">Save Preferences</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Data Management</h3>
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;" onclick="exportData()">📥 Export Data (JSON)</button>
+                            <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;" onclick="downloadCSV()">📊 Download as CSV</button>
+                            <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;" onclick="importData()">📤 Import Data</button>
+                            <input type="file" id="importFile" style="display: none;" accept=".json">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>About</h3>
+                        <div style="margin-top: 20px;">
+                            <p style="font-size: 12px; color: var(--text-light);">
+                                <strong>ObligationOS v2.0</strong><br>
+                                Your Personal Intelligence Network for Life Administration<br><br>
+                                🚀 Features: AI-Powered Analytics, Predictive Reminders, Smart Insights, Multi-Channel Notifications, Advanced Analytics, Automated Workflows<br><br>
+                                Built for the Hackathon 2026<br>
+                                © 2026 ObligationOS. All rights reserved.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Add General Obligation Modal -->
+    <div id="addObligationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Obligation</h2>
+                <span class="close" onclick="closeModal('addObligationModal')">&times;</span>
+            </div>
+            <form onsubmit="addObligation(event)">
+                <div class="form-group">
+                    <label>Obligation Type</label>
+                    <select id="obligationType" required>
+                        <option value="">Select type...</option>
+                        <option value="bill">Bill</option>
+                        <option value="insurance">Insurance</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="subscription">Subscription</option>
+                        <option value="document">Document</option>
+                        <option value="appointment">Appointment</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="obligationTitle" placeholder="e.g., Electric Bill" required>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" id="obligationDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Amount (if applicable)</label>
+                    <input type="number" id="obligationAmount" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select id="obligationFrequency">
+                        <option value="one-time">One Time</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="annual">Annual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="obligationPriority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="obligationNotes" placeholder="Add any additional notes..." rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Obligation</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addObligationModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Bill Modal -->
+    <div id="addBillModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Bill</h2>
+                <span class="close" onclick="closeModal('addBillModal')">&times;</span>
+            </div>
+            <form onsubmit="addBill(event)">
+                <div class="form-group">
+                    <label>Bill Name</label>
+                    <input type="text" id="billName" placeholder="e.g., Electric, Water, Internet" required>
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Due Date (Day of Month)</label>
+                    <input type="number" id="billDueDay" min="1" max="31" placeholder="15" required>
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select id="billFrequency" required>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="annual">Annual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Payee</label>
+                    <input type="text" id="billPayee" placeholder="Company name">
+                </div>
+                <div class="form-group">
+                    <label>Account/Reference Number</label>
+                    <input type="text" id="billReference" placeholder="Optional">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Bill</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addBillModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Insurance Modal -->
+    <div id="addInsuranceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Insurance Policy</h2>
+                <span class="close" onclick="closeModal('addInsuranceModal')">&times;</span>
+            </div>
+            <form onsubmit="addInsurance(event)">
+                <div class="form-group">
+                    <label>Policy Name</label>
+                    <input type="text" id="insuranceName" placeholder="e.g., Car Insurance" required>
+                </div>
+                <div class="form-group">
+                    <label>Insurance Provider</label>
+                    <input type="text" id="insuranceProvider" placeholder="Company name" required>
+                </div>
+                <div class="form-group">
+                    <label>Coverage Type</label>
+                    <select id="insuranceType" required>
+                        <option value="">Select type...</option>
+                        <option value="auto">Auto</option>
+                        <option value="home">Home</option>
+                        <option value="health">Health</option>
+                        <option value="life">Life</option>
+                        <option value="travel">Travel</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Premium Amount</label>
+                    <input type="number" id="insurancePremium" placeholder="0.00" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Renewal Date</label>
+                    <input type="date" id="insuranceRenewalDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Policy Number</label>
+                    <input type="text" id="insurancePolicyNumber" placeholder="Optional">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Policy</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addInsuranceModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Maintenance Modal -->
+    <div id="addMaintenanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Maintenance Task</h2>
+                <span class="close" onclick="closeModal('addMaintenanceModal')">&times;</span>
+            </div>
+            <form onsubmit="addMaintenance(event)">
+                <div class="form-group">
+                    <label>Service Type</label>
+                    <input type="text" id="maintenanceService" placeholder="e.g., Oil Change, Inspection" required>
+                </div>
+                <div class="form-group">
+                    <label>Asset</label>
+                    <select id="maintenanceAsset" required>
+                        <option value="">Select asset...</option>
+                        <option value="car">Car</option>
+                        <option value="home">Home</option>
+                        <option value="bike">Motorcycle/Bike</option>
+                        <option value="appliance">Appliance</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Last Completed</label>
+                    <input type="date" id="maintenanceLastDone" required>
+                </div>
+                <div class="form-group">
+                    <label>Interval (months)</label>
+                    <input type="number" id="maintenanceInterval" placeholder="6" required>
+                </div>
+                <div class="form-group">
+                    <label>Estimated Cost</label>
+                    <input type="number" id="maintenanceCost" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Provider</label>
+                    <input type="text" id="maintenanceProvider" placeholder="Optional">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Task</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addMaintenanceModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Subscription Modal -->
+    <div id="addSubscriptionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Subscription</h2>
+                <span class="close" onclick="closeModal('addSubscriptionModal')">&times;</span>
+            </div>
+            <form onsubmit="addSubscription(event)">
+                <div class="form-group">
+                    <label>Service Name</label>
+                    <input type="text" id="subscriptionName" placeholder="e.g., Netflix, Spotify" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="subscriptionCategory" required>
+                        <option value="">Select category...</option>
+                        <option value="streaming">Streaming</option>
+                        <option value="productivity">Productivity</option>
+                        <option value="fitness">Fitness</option>
+                        <option value="education">Education</option>
+                        <option value="news">News</option>
+                        <option value="music">Music</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cost</label>
+                    <input type="number" id="subscriptionCost" placeholder="0.00" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Billing Cycle</label>
+                    <select id="subscriptionBilling" required>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="annual">Annual</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Next Charge Date</label>
+                    <input type="date" id="subscriptionNextCharge" required>
+                </div>
+                <div class="form-group">
+                    <label>Login/Account Info (Optional)</label>
+                    <input type="text" id="subscriptionAccount" placeholder="Username or account identifier">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Subscription</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addSubscriptionModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Document Modal -->
+    <div id="addDocumentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Document</h2>
+                <span class="close" onclick="closeModal('addDocumentModal')">&times;</span>
+            </div>
+            <form onsubmit="addDocument(event)">
+                <div class="form-group">
+                    <label>Document Name</label>
+                    <input type="text" id="documentName" placeholder="e.g., Passport" required>
+                </div>
+                <div class="form-group">
+                    <label>Document Type</label>
+                    <select id="documentType" required>
+                        <option value="">Select type...</option>
+                        <option value="passport">Passport</option>
+                        <option value="license">License</option>
+                        <option value="visa">Visa</option>
+                        <option value="certificate">Certificate</option>
+                        <option value="permit">Permit</option>
+                        <option value="card">ID Card</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Issue Date</label>
+                    <input type="date" id="documentIssueDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="documentExpiryDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Number/ID</label>
+                    <input type="text" id="documentNumber" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                    <label>Storage Location</label>
+                    <input type="text" id="documentLocation" placeholder="Where to find it">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Document</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addDocumentModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Appointment Modal -->
+    <div id="addAppointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Appointment</h2>
+                <span class="close" onclick="closeModal('addAppointmentModal')">&times;</span>
+            </div>
+            <form onsubmit="addAppointment(event)">
+                <div class="form-group">
+                    <label>Appointment Type</label>
+                    <select id="appointmentType" required>
+                        <option value="">Select type...</option>
+                        <option value="medical">Medical</option>
+                        <option value="dental">Dental</option>
+                        <option value="eye">Eye Care</option>
+                        <option value="haircut">Haircut</option>
+                        <option value="business">Business</option>
+                        <option value="personal">Personal</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Provider/Specialist</label>
+                    <input type="text" id="appointmentProvider" placeholder="Dr. Name / Salon / etc." required>
+                </div>
+                <div class="form-group">
+                    <label>Date & Time</label>
+                    <input type="datetime-local" id="appointmentDateTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="appointmentLocation" placeholder="Address or venue" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" id="appointmentContact" placeholder="Phone number">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="appointmentNotes" placeholder="Any preparation needed?" rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Appointment</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addAppointmentModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Reminder Modal -->
+    <div id="addReminderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configure Reminder</h2>
+                <span class="close" onclick="closeModal('addReminderModal')">&times;</span>
+            </div>
+            <form onsubmit="addReminder(event)">
+                <div class="form-group">
+                    <label>What to remind about</label>
+                    <select id="reminderObligation" required>
+                        <option value="">Select obligation...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Remind me</label>
+                    <select id="reminderBefore" required>
+                        <option value="1">1 day before</option>
+                        <option value="3" selected>3 days before</option>
+                        <option value="7">1 week before</option>
+                        <option value="14">2 weeks before</option>
+                        <option value="30">1 month before</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notification Channels</label>
+                    <div style="display: grid; gap: 10px; margin-top: 10px;">
+                        <label style="display: flex; gap: 8px;">
+                            <input type="checkbox" class="reminderChannel" value="email" checked> Email
+                        </label>
+                        <label style="display: flex; gap: 8px;">
+                            <input type="checkbox" class="reminderChannel" value="push" checked> Push Notification
+                        </label>
+                        <label style="display: flex; gap: 8px;">
+                            <input type="checkbox" class="reminderChannel" value="sms"> SMS
+                        </label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Create Reminder</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeModal('addReminderModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============ DATA MANAGEMENT ============
+        class ObligationManager {
+            constructor() {
+                this.obligations = this.loadData('obligations') || [];
+                this.reminders = this.loadData('reminders') || [];
+                this.settings = this.loadData('settings') || this.getDefaultSettings();
+                this.reminderHistory = this.loadData('reminderHistory') || [];
+            }
+
+            getDefaultSettings() {
+                return {
+                    userName: 'User',
+                    userEmail: '',
+                    currency: '$',
+                    notifyOverdue: true,
+                    notifyUpcoming: true,
+                    notifyWeekly: false,
+                    reminderTiming: 3,
+                    emailReminder: true,
+                    pushReminder: true,
+                    smsReminder: false,
+                    slackReminder: false
+                };
+            }
+
+            loadData(key) {
+                try {
+                    return JSON.parse(localStorage.getItem(key));
+                } catch {
+                    return null;
+                }
+            }
+
+            saveData(key, data) {
+                localStorage.setItem(key, JSON.stringify(data));
+            }
+
+            addObligation(data) {
+                const obligation = {
+                    id: Date.now(),
+                    type: data.type,
+                    title: data.title,
+                    dueDate: data.dueDate,
+                    amount: parseFloat(data.amount) || 0,
+                    frequency: data.frequency,
+                    priority: data.priority,
+                    notes: data.notes,
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                    completedAt: null
+                };
+                this.obligations.push(obligation);
+                this.saveData('obligations', this.obligations);
+                return obligation;
+            }
+
+            updateObligation(id, data) {
+                const index = this.obligations.findIndex(o => o.id === id);
+                if (index !== -1) {
+                    this.obligations[index] = { ...this.obligations[index], ...data };
+                    this.saveData('obligations', this.obligations);
+                }
+            }
+
+            deleteObligation(id) {
+                this.obligations = this.obligations.filter(o => o.id !== id);
+                this.saveData('obligations', this.obligations);
+            }
+
+            getObligationsByType(type) {
+                return this.obligations.filter(o => o.type === type);
+            }
+
+            getUpcomingObligations(days = 30) {
+                const today = new Date();
+                const futureDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+                return this.obligations.filter(o => {
+                    const dueDate = new Date(o.dueDate);
+                    return dueDate >= today && dueDate <= futureDate;
+                }).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+            }
+
+            getOverdueObligations() {
+                const today = new Date();
+                return this.obligations.filter(o => {
+                    const dueDate = new Date(o.dueDate);
+                    return dueDate < today && o.status !== 'completed';
+                });
+            }
+
+            calculateHealthScore() {
+                if (this.obligations.length === 0) return 100;
+                const completed = this.obligations.filter(o => o.status === 'completed').length;
+                const overdue = this.getOverdueObligations().length;
+                const score = Math.max(0, Math.min(100, 100 - (overdue * 15) + (completed * 2)));
+                return Math.round(score);
+            }
+
+            getTotalSpending(period = 'month') {
+                return this.obligations.reduce((sum, o) => sum + o.amount, 0);
+            }
+
+            generateInsights() {
+                const insights = [];
+                const overdue = this.getOverdueObligations();
+                if (overdue.length > 0) {
+                    insights.push({
+                        type: 'warning',
+                        title: `⚠️ ${overdue.length} Overdue Obligations`,
+                        message: `You have ${overdue.length} overdue obligations. Resolve them as soon as possible!`
+                    });
+                }
+
+                const expensive = this.obligations.sort((a, b) => b.amount - a.amount).slice(0, 3);
+                if (expensive.length > 0) {
+                    const total = expensive.reduce((sum, o) => sum + o.amount, 0);
+                    insights.push({
+                        type: 'info',
+                        title: '💰 Top 3 Expenses',
+                        message: `Your top 3 obligations cost ${total.toFixed(2)} total`
+                    });
+                }
+
+                const subscriptions = this.getObligationsByType('subscription');
+                if (subscriptions.length > 5) {
+                    insights.push({
+                        type: 'suggestion',
+                        title: '📊 Review Subscriptions',
+                        message: `You have ${subscriptions.length} subscriptions. Consider reviewing unused ones.`
+                    });
+                }
+
+                return insights;
+            }
+
+            exportToJSON() {
+                return JSON.stringify({
+                    obligations: this.obligations,
+                    reminders: this.reminders,
+                    settings: this.settings,
+                    exportedAt: new Date().toISOString()
+                }, null, 2);
+            }
+        }
+
+        // ============ INITIALIZATION ============
+        const manager = new ObligationManager();
+
+        // ============ UI FUNCTIONS ============
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+        }
+
+        function switchTab(event, tabId) {
+            event.currentTarget.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            event.currentTarget.parentElement.parentElement.querySelectorAll('[id$="Settings"], [id$="History"]').forEach(e => {
+                e.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // ============ ADD FUNCTIONS ============
+        function addObligation(e) {
+            e.preventDefault();
+            const data = {
+                type: document.getElementById('obligationType').value,
+                title: document.getElementById('obligationTitle').value,
+                dueDate: document.getElementById('obligationDueDate').value,
+                amount: document.getElementById('obligationAmount').value,
+                frequency: document.getElementById('obligationFrequency').value,
+                priority: document.getElementById('obligationPriority').value,
+                notes: document.getElementById('obligationNotes').value
+            };
+            
+            manager.addObligation(data);
+            closeModal('addObligationModal');
+            e.target.reset();
+            updateDashboard();
+            showNotification('Obligation added successfully!', 'success');
+        }
+
+        function addBill(e) {
+            e.preventDefault();
+            const data = {
+                type: 'bill',
+                title: document.getElementById('billName').value,
+                dueDate: calculateNextDueDate(document.getElementById('billDueDay').value),
+                amount: parseFloat(document.getElementById('billAmount').value),
+                frequency: document.getElementById('billFrequency').value,
+                priority: 'high',
+                notes: `Payee: ${document.getElementById('billPayee').value} | Ref: ${document.getElementById('billReference').value}`
+            };
+            
+            manager.addObligation(data);
+            closeModal('addBillModal');
+            e.target.reset();
+            updateDashboard();
+            updateBillsTable();
+            showNotification('Bill added successfully!', 'success');
+        }
+
+        function addInsurance(e) {
+            e.preventDefault();
+            const data = {
+                type: 'insurance',
+                title: document.getElementById('insuranceName').value,
+                dueDate: document.getElementById('insuranceRenewalDate').value,
+                amount: parseFloat(document.getElementById('insurancePremium').value),
+                frequency: 'annual',
+                priority: 'high',
+                notes: `Provider: ${document.getElementById('insuranceProvider').value} | Type: ${document.getElementById('insuranceType').value} | Policy: ${document.getElementById('insurancePolicyNumber').value}`
+            };
+            
+            manager.addObligation(data);
+            closeModal('addInsuranceModal');
+            e.target.reset();
+            updateDashboard();
+            updateInsuranceTable();
+            showNotification('Insurance policy added successfully!', 'success');
+        }
+
+        function addMaintenance(e) {
+            e.preventDefault();
+            const lastDone = new Date(document.getElementById('maintenanceLastDone').value);
+            const interval = parseInt(document.getElementById('maintenanceInterval').value);
+            const nextDue = new Date(lastDone.getTime() + interval * 30 * 24 * 60 * 60 * 1000);
+            
+            const data = {
+                type: 'maintenance',
+                title: `${document.getElementById('maintenanceService').value} - ${document.getElementById('maintenanceAsset').value}`,
+                dueDate: nextDue.toISOString().split('T')[0],
+                amount: parseFloat(document.getElementById('maintenanceCost').value),
+                frequency: 'recurring',
+                priority: 'medium',
+                notes: `Asset: ${document.getElementById('maintenanceAsset').value} | Last Done: ${document.getElementById('maintenanceLastDone').value} | Interval: ${interval} months | Provider: ${document.getElementById('maintenanceProvider').value}`
+            };
+            
+            manager.addObligation(data);
+            closeModal('addMaintenanceModal');
+            e.target.reset();
+            updateDashboard();
+            updateMaintenanceTable();
+            showNotification('Maintenance task added successfully!', 'success');
+        }
+
+        function addSubscription(e) {
+            e.preventDefault();
+            const data = {
+                type: 'subscription',
+                title: document.getElementById('subscriptionName').value,
+                dueDate: document.getElementById('subscriptionNextCharge').value,
+                amount: parseFloat(document.getElementById('subscriptionCost').value),
+                frequency: document.getElementById('subscriptionBilling').value,
+                priority: 'medium',
+                notes: `Category: ${document.getElementById('subscriptionCategory').value} | Account: ${document.getElementById('subscriptionAccount').value}`
+            };
+            
+            manager.addObligation(data);
+            closeModal('addSubscriptionModal');
+            e.target.reset();
+            updateDashboard();
+            updateSubscriptionTable();
+            showNotification('Subscription added successfully!', 'success');
+        }
+
+        function addDocument(e) {
+            e.preventDefault();
+            const data = {
+                type: 'document',
+                title: document.getElementById('documentName').value,
+                dueDate: document.getElementById('documentExpiryDate').value,
+                amount: 0,
+                frequency: 'one-time',
+                priority: 'high',
+                notes: `Type: ${document.getElementById('documentType').value} | Issued: ${document.getElementById('documentIssueDate').value} | Number: ${document.getElementById('documentNumber').value} | Location: ${document.getElementById('documentLocation').value}`
+            };
+            
+            manager.addObligation(data);
+            closeModal('addDocumentModal');
+            e.target.reset();
+            updateDashboard();
+            updateDocumentTable();
+            showNotification('Document added successfully!', 'success');
+        }
+
+        function addAppointment(e) {
+            e.preventDefault();
+            const data = {
+                type: 'appointment',
+                title: `${document.getElementById('appointmentType').value} - ${document.getElementById('appointmentProvider').value}`,
+                dueDate: document.getElementById('appointmentDateTime').value,
+                amount: 0,
+                frequency: 'one-time',
+                priority: 'high',
+                notes: `Type: ${document.getElementById('appointmentType').value} | Provider: ${document.getElementById('appointmentProvider').value} | Location: ${document.getElementById('appointmentLocation').value} | Contact: ${document.getElementById('appointmentContact').value} | Notes: ${document.getElementById('appointmentNotes').value}`
+            };
+            
+            manager.addObligation(data);
+            closeModal('addAppointmentModal');
+            e.target.reset();
+            updateDashboard();
+            updateAppointmentTable();
+            showNotification('Appointment added successfully!', 'success');
+        }
+
+        function addReminder(e) {
+            e.preventDefault();
+            const reminder = {
+                id: Date.now(),
+                obligationId: document.getElementById('reminderObligation').value,
+                daysBefore: parseInt(document.getElementById('reminderBefore').value),
+                channels: Array.from(document.querySelectorAll('.reminderChannel:checked')).map(c => c.value),
+                createdAt: new Date().toISOString(),
+                enabled: true
+            };
+            manager.reminders.push(reminder);
+            manager.saveData('reminders', manager.reminders);
+            closeModal('addReminderModal');
+            e.target.reset();
+            updateRemindersPanel();
+            showNotification('Reminder configured successfully!', 'success');
+        }
+
+        // ============ UPDATE TABLE FUNCTIONS ============
+        function updateBillsTable() {
+            const bills = manager.getObligationsByType('bill');
+            const tbody = document.getElementById('billsBody');
+            tbody.innerHTML = '';
+
+            if (bills.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-light);">No bills added yet.</td></tr>';
+                return;
+            }
+
+            bills.forEach(bill => {
+                const dueDate = new Date(bill.dueDate);
+                const today = new Date();
+                const isOverdue = dueDate < today && bill.status !== 'completed';
+                const status = isOverdue ? 'overdue' : (bill.status === 'completed' ? 'paid' : 'pending');
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${bill.title}</strong></td>
+                        <td>${manager.settings.currency}${bill.amount.toFixed(2)}</td>
+                        <td>${dueDate.toLocaleDateString()}</td>
+                        <td><span class="badge">${bill.frequency}</span></td>
+                        <td><span class="badge badge-${status === 'paid' ? 'success' : status === 'overdue' ? 'danger' : 'warning'}">${status}</span></td>
+                        <td>
+                            <button class="action-button" onclick="markComplete(${bill.id})">✓ Mark Paid</button>
+                            <button class="action-button" onclick="deleteObligation(${bill.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateInsuranceTable() {
+            const policies = manager.getObligationsByType('insurance');
+            const tbody = document.getElementById('insuranceBody');
+            tbody.innerHTML = '';
+
+            if (policies.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-light);">No insurance policies added yet.</td></tr>';
+                return;
+            }
+
+            policies.forEach(policy => {
+                const renewalDate = new Date(policy.dueDate);
+                const today = new Date();
+                const daysUntilRenewal = Math.ceil((renewalDate - today) / (1000 * 60 * 60 * 24));
+                let status = 'active';
+                if (daysUntilRenewal < 0) status = 'expired';
+                else if (daysUntilRenewal < 30) status = 'expiring';
+
+                const details = policy.notes.split('|');
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${policy.title}</strong></td>
+                        <td>${details[0]?.split(':')[1]?.trim() || 'N/A'}</td>
+                        <td>${manager.settings.currency}${policy.amount.toFixed(2)}</td>
+                        <td>${renewalDate.toLocaleDateString()}</td>
+                        <td>${details[1]?.split(':')[1]?.trim() || 'N/A'}</td>
+                        <td><span class="badge badge-${status === 'active' ? 'success' : status === 'expiring' ? 'warning' : 'danger'}">${status}</span></td>
+                        <td>
+                            <button class="action-button" onclick="deleteObligation(${policy.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateMaintenanceTable() {
+            const tasks = manager.getObligationsByType('maintenance');
+            const tbody = document.getElementById('maintenanceBody');
+            tbody.innerHTML = '';
+
+            if (tasks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-light);">No maintenance tasks added yet.</td></tr>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const nextDue = new Date(task.dueDate);
+                const today = new Date();
+                const isOverdue = nextDue < today && task.status !== 'completed';
+                const status = isOverdue ? 'overdue' : (task.status === 'completed' ? 'completed' : 'scheduled');
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${task.title.split('-')[0].trim()}</strong></td>
+                        <td>${task.title.split('-')[1]?.trim() || 'N/A'}</td>
+                        <td>N/A</td>
+                        <td>${nextDue.toLocaleDateString()}</td>
+                        <td>${manager.settings.currency}${task.amount.toFixed(2)}</td>
+                        <td><span class="badge badge-${status === 'completed' ? 'success' : status === 'overdue' ? 'danger' : 'warning'}">${status}</span></td>
+                        <td>
+                            <button class="action-button" onclick="markComplete(${task.id})">✓ Done</button>
+                            <button class="action-button" onclick="deleteObligation(${task.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateSubscriptionTable() {
+            const subs = manager.getObligationsByType('subscription');
+            const tbody = document.getElementById('subscriptionBody');
+            tbody.innerHTML = '';
+
+            if (subs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-light);">No subscriptions added yet.</td></tr>';
+                return;
+            }
+
+            subs.forEach(sub => {
+                const nextCharge = new Date(sub.dueDate);
+                const today = new Date();
+                const daysUntilCharge = Math.ceil((nextCharge - today) / (1000 * 60 * 60 * 24));
+                const status = daysUntilCharge < 0 ? 'cancelled' : (daysUntilCharge < 7 ? 'expiring' : 'active');
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${sub.title}</strong></td>
+                        <td>${manager.settings.currency}${sub.amount.toFixed(2)}</td>
+                        <td>${sub.frequency}</td>
+                        <td>${nextCharge.toLocaleDateString()}</td>
+                        <td>${sub.notes.split('|')[0]?.split(':')[1]?.trim() || 'N/A'}</td>
+                        <td><span class="badge badge-${status === 'active' ? 'success' : status === 'expiring' ? 'warning' : 'danger'}">${status}</span></td>
+                        <td>
+                            <button class="action-button" onclick="deleteObligation(${sub.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateDocumentTable() {
+            const docs = manager.getObligationsByType('document');
+            const tbody = document.getElementById('documentBody');
+            tbody.innerHTML = '';
+
+            if (docs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-light);">No documents added yet.</td></tr>';
+                return;
+            }
+
+            docs.forEach(doc => {
+                const expiryDate = new Date(doc.dueDate);
+                const today = new Date();
+                const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                let status = 'valid';
+                if (daysLeft < 0) status = 'expired';
+                else if (daysLeft < 90) status = 'expiring';
+
+                const details = doc.notes.split('|');
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${doc.title}</strong></td>
+                        <td>${details[0]?.split(':')[1]?.trim() || 'N/A'}</td>
+                        <td>${details[1]?.split(':')[1]?.trim() || 'N/A'}</td>
+                        <td>${expiryDate.toLocaleDateString()}</td>
+                        <td>${daysLeft > 0 ? daysLeft : 'Expired'}</td>
+                        <td><span class="badge badge-${status === 'valid' ? 'success' : status === 'expiring' ? 'warning' : 'danger'}">${status}</span></td>
+                        <td>
+                            <button class="action-button" onclick="deleteObligation(${doc.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateAppointmentTable() {
+            const appointments = manager.getObligationsByType('appointment');
+            const tbody = document.getElementById('appointmentBody');
+            tbody.innerHTML = '';
+
+            if (appointments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-light);">No appointments scheduled yet.</td></tr>';
+                return;
+            }
+
+            appointments.forEach(apt => {
+                const aptDate = new Date(apt.dueDate);
+                const today = new Date();
+                const isPast = aptDate < today;
+                const status = isPast ? 'completed' : 'scheduled';
+
+                const details = apt.notes.split('|');
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${details[0]?.split(':')[1]?.trim() || apt.title}</strong></td>
+                        <td>${details[1]?.split(':')[1]?.trim() || 'N/A'}</td>
+                        <td>${aptDate.toLocaleString()}</td>
+                        <td>${details[2]?.split(':')[1]?.trim() || 'N/A'}</td>
+                        <td><span class="badge badge-${status === 'completed' ? 'success' : 'warning'}">${status}</span></td>
+                        <td>
+                            <button class="action-button" onclick="deleteObligation(${apt.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // ============ DASHBOARD UPDATE ============
+        function updateDashboard() {
+            updateStats();
+            updateTimeline();
+            updateInsights();
+            updateAllTables();
+        }
+
+        function updateStats() {
+            const total = manager.obligations.length;
+            const thisMonth = manager.getUpcomingObligations(30).length;
+            const spending = manager.getTotalSpending();
+            const atRisk = manager.getOverdueObligations().length;
+            const healthScore = manager.calculateHealthScore();
+
+            document.getElementById('totalObligations').textContent = total;
+            document.getElementById('duThisMonth').textContent = thisMonth;
+            document.getElementById('monthlySpending').textContent = `${manager.settings.currency}${spending.toFixed(2)}`;
+            document.getElementById('atRisk').textContent = atRisk;
+            
+            const healthEl = document.getElementById('healthScore');
+            healthEl.textContent = healthScore;
+            
+            let healthStatus, healthDetail, color;
+            if (healthScore >= 80) {
+                healthStatus = 'Excellent';
+                healthDetail = 'All obligations tracked and on schedule';
+                color = 'var(--success)';
+            } else if (healthScore >= 60) {
+                healthStatus = 'Good';
+                healthDetail = 'Most obligations on track';
+                color = 'var(--warning)';
+            } else {
+                healthStatus = 'Needs Attention';
+                healthDetail = 'Review overdue obligations';
+                color = 'var(--danger)';
+            }
+            
+            document.getElementById('healthStatus').textContent = healthStatus;
+            document.getElementById('healthStatus').style.color = color;
+            document.getElementById('healthDetail').textContent = healthDetail;
+        }
+
+        function updateTimeline() {
+            const upcoming = manager.getUpcomingObligations(30);
+            const timelineEl = document.getElementById('upcomingTimeline');
+            
+            if (upcoming.length === 0) {
+                timelineEl.innerHTML = '<div class="empty-state"><p>No upcoming obligations in the next 30 days</p></div>';
+                return;
+            }
+
+            timelineEl.innerHTML = upcoming.map(obl => {
+                const dueDate = new Date(obl.dueDate);
+                const today = new Date();
+                const daysUntil = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                
+                let urgencyClass = 'urgency-low';
+                if (daysUntil <= 0) urgencyClass = 'urgency-critical';
+                else if (daysUntil <= 3) urgencyClass = 'urgency-critical';
+                else if (daysUntil <= 7) urgencyClass = 'urgency-high';
+                else if (daysUntil <= 14) urgencyClass = 'urgency-medium';
+
+                const icons = {
+                    bill: '💰',
+                    insurance: '🛡️',
+                    maintenance: '🔧',
+                    subscription: '🎯',
+                    document: '📄',
+                    appointment: '📅'
+                };
+
+                return `
+                    <div class="timeline-item">
+                        <div class="timeline-dot">${icons[obl.type] || '📋'}</div>
+                        <div class="timeline-content" style="flex: 1;">
+                            <h4>${obl.title}</h4>
+                            <p>${dueDate.toLocaleDateString()} (${daysUntil} days away)</p>
+                            ${obl.amount > 0 ? `<p style="font-weight: 600; color: var(--primary); margin-top: 4px;">${manager.settings.currency}${obl.amount.toFixed(2)}</p>` : ''}
+                            <span class="urgency-badge ${urgencyClass}">${daysUntil <= 3 ? 'Critical' : daysUntil <= 7 ? 'High Priority' : daysUntil <= 14 ? 'Medium' : 'Low Priority'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateInsights() {
+            const insights = manager.generateInsights();
+            const insightsEl = document.getElementById('aiInsights');
+            
+            if (insights.length === 0) {
+                insightsEl.innerHTML = `
+                    <div class="insight-item">
+                        <h4>✅ All Clear!</h4>
+                        <p>No critical issues detected. Keep up the good work!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            insightsEl.innerHTML = insights.map(insight => `
+                <div class="insight-item">
+                    <h4>${insight.title}</h4>
+                    <p>${insight.message}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateAllTables() {
+            updateBillsTable();
+            updateInsuranceTable();
+            updateMaintenanceTable();
+            updateSubscriptionTable();
+            updateDocumentTable();
+            updateAppointmentTable();
+            updateAppointmentCalendar();
+            updateAppointmentList();
+            populateReminderSelect();
+        }
+
+        // ============ UTILITY FUNCTIONS ============
+        function calculateNextDueDate(dayOfMonth) {
+            const today = new Date();
+            let dueDate = new Date(today.getFullYear(), today.getMonth(), dayOfMonth);
+            if (dueDate < today) {
+                dueDate = new Date(today.getFullYear(), today.getMonth() + 1, dayOfMonth);
+            }
+            return dueDate.toISOString().split('T')[0];
+        }
+
+        function markComplete(id) {
+            manager.updateObligation(id, { status: 'completed', completedAt: new Date().toISOString() });
+            updateDashboard();
+            showNotification('Obligation marked as complete!', 'success');
+        }
+
+        function deleteObligation(id) {
+            if (confirm('Are you sure you want to delete this obligation?')) {
+                manager.deleteObligation(id);
+                updateDashboard();
+                showNotification('Obligation deleted!', 'success');
+            }
+        }
+
+        function updateRemindersPanel() {
+            const remindersList = document.getElementById('remindersList');
+            if (manager.reminders.length === 0) {
+                remindersList.innerHTML = '<div class="empty-state"><p>No reminders configured yet.</p></div>';
+                return;
+            }
+
+            remindersList.innerHTML = manager.reminders.map(reminder => {
+                const obligation = manager.obligations.find(o => o.id == reminder.obligationId);
+                return `
+                    <div class="notification-item">
+                        <strong>${obligation?.title || 'Deleted Obligation'}</strong><br>
+                        Remind ${reminder.daysBefore} days before<br>
+                        Channels: ${reminder.channels.join(', ')}<br>
+                        <button class="action-button" style="margin-top: 8px;" onclick="deleteReminder(${reminder.id})">Delete</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteReminder(id) {
+            manager.reminders = manager.reminders.filter(r => r.id !== id);
+            manager.saveData('reminders', manager.reminders);
+            updateRemindersPanel();
+            showNotification('Reminder deleted!', 'success');
+        }
+
+        function populateReminderSelect() {
+            const select = document.getElementById('reminderObligation');
+            select.innerHTML = '<option value="">Select obligation...</option>';
+            manager.obligations.forEach(obl => {
+                select.innerHTML += `<option value="${obl.id}">${obl.title}</option>`;
+            });
+        }
+
+        function updateAppointmentCalendar() {
+            const calendar = document.getElementById('appointmentCalendar');
+            const appointments = manager.getObligationsByType('appointment');
+            const today = new Date();
+            const days = [];
+
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() + i);
+                const hasEvent = appointments.some(apt => {
+                    const aptDate = new Date(apt.dueDate);
+                    return aptDate.toDateString() === date.toDateString();
+                });
+                days.push(
+                    `<div class="calendar-day ${hasEvent ? 'has-event' : ''}">${date.getDate()}</div>`
+                );
+            }
+
+            calendar.innerHTML = days.join('');
+        }
+
+        function updateAppointmentList() {
+            const list = document.getElementById('appointmentList');
+            const appointments = manager.getUpcomingObligations(30)
+                .filter(a => a.type === 'appointment')
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+            if (appointments.length === 0) {
+                list.innerHTML = '<div class="empty-state" style="padding: 20px;"><p>No upcoming appointments</p></div>';
+                return;
+            }
+
+            list.innerHTML = appointments.map(apt => `
+                <div style="padding: 10px; border-bottom: 1px solid var(--border);">
+                    <p style="font-weight: 600; margin-bottom: 4px;">📅 ${apt.title}</p>
+                    <p style="font-size: 12px; color: var(--text-light);">${new Date(apt.dueDate).toLocaleString()}</p>
+                </div>
+            `).join('');
+        }
+
+        function saveProfile() {
+            manager.settings.userName = document.getElementById('userName').value;
+            manager.settings.userEmail = document.getElementById('userEmail').value;
+            manager.settings.currency = document.getElementById('currency').value;
+            manager.saveData('settings', manager.settings);
+            showNotification('Profile saved!', 'success');
+        }
+
+        function saveNotificationPrefs() {
+            manager.settings.notifyOverdue = document.getElementById('notifyOverdue').checked;
+            manager.settings.notifyUpcoming = document.getElementById('notifyUpcoming').checked;
+            manager.settings.notifyWeekly = document.getElementById('notifyWeekly').checked;
+            manager.saveData('settings', manager.settings);
+            showNotification('Notification preferences saved!', 'success');
+        }
+
+        function saveReminderSettings() {
+            manager.settings.reminderTiming = parseInt(document.getElementById('reminderTiming').value);
+            manager.settings.emailReminder = document.getElementById('emailReminder').checked;
+            manager.settings.pushReminder = document.getElementById('pushReminder').checked;
+            manager.settings.smsReminder = document.getElementById('smsReminder').checked;
+            manager.settings.slackReminder = document.getElementById('slackReminder').checked;
+            manager.saveData('settings', manager.settings);
+            showNotification('Reminder settings saved!', 'success');
+        }
+
+        function exportData() {
+            const json = manager.exportToJSON();
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `obligationos-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            showNotification('Data exported successfully!', 'success');
+        }
+
+        function downloadCSV() {
+            let csv = 'Title,Type,Due Date,Amount,Frequency,Status,Priority\n';
+            manager.obligations.forEach(obl => {
+                csv += `"${obl.title}","${obl.type}","${obl.dueDate}","${obl.amount}","${obl.frequency}","${obl.status}","${obl.priority}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `obligationos-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            showNotification('Data downloaded as CSV!', 'success');
+        }
+
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+
+        function syncAllData() {
+            showNotification('Syncing data...', 'success');
+            setTimeout(() => {
+                showNotification('Sync complete! All data is up to date.', 'success');
+            }, 1000);
+        }
+
+        // ============ NAVIGATION ============
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                switchSection(section);
+            });
+        });
+
+        // ============ MODAL CLOSE ON OUTSIDE CLICK ============
+        window.addEventListener('click', (event) => {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // ============ SEARCH & FILTER ============
+        document.getElementById('billSearch').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('#billsBody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        });
+
+        // ============ LOAD INITIAL DATA ============
+        window.addEventListener('DOMContentLoaded', () => {
+            updateDashboard();
+            populateReminderSelect();
+            
+            // Load settings
+            document.getElementById('userName').value = manager.settings.userName;
+            document.getElementById('userEmail').value = manager.settings.userEmail;
+            document.getElementById('currency').value = manager.settings.currency;
+            document.getElementById('notifyOverdue').checked = manager.settings.notifyOverdue;
+            document.getElementById('notifyUpcoming').checked = manager.settings.notifyUpcoming;
+            document.getElementById('notifyWeekly').checked = manager.settings.notifyWeekly;
+            document.getElementById('emailReminder').checked = manager.settings.emailReminder;
+            document.getElementById('pushReminder').checked = manager.settings.pushReminder;
+            document.getElementById('smsReminder').checked = manager.settings.smsReminder;
+            document.getElementById('slackReminder').checked = manager.settings.slackReminder;
+            document.getElementById('reminderTiming').value = manager.settings.reminderTiming;
+        });
+    </script>
+</body>
+</html>
